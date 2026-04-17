@@ -27,6 +27,15 @@ fn test_transpose() {
     );
 }
 
+fn print_matrix(matrix: &[[i32; 3]; 3]) {
+    for row in matrix {
+        for &val in row {
+            print!("{:>4} ", val);
+        }
+        println!();
+    }
+}
+
 fn main() {
     let matrix = [
         [101, 102, 103], // <-- комментарий заставляет rustfmt добавить новую строку
@@ -34,7 +43,9 @@ fn main() {
         [301, 302, 303],
     ];
 
-    println!("матрица: {:#?}", matrix);
+    println!("матрица:");
+    print_matrix(&matrix);
     let transposed = transpose(matrix);
-    println!("транспонированная матрица: {:#?}", transposed);
+    println!("транспонированная матрица:");
+    print_matrix(&transposed);
 }
