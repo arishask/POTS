@@ -6,20 +6,21 @@ struct RotDecoder<R: Read> {
 }
 
 impl<R: Read> Read for RotDecoder<R> {
-    fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        // читаем из входного потока
-        let n = self.input.read(buf)?;
-
-        // преобразуем каждый байт
-        for byte in &mut buf[..n] {
-            if byte.is_ascii_lowercase() {
-                *byte = ((*byte - b'a' + self.rot) % 26) + b'a';
-            } else if byte.is_ascii_uppercase() {
-                *byte = ((*byte - b'A' + self.rot) % 26) + b'A';
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        // Читаем данные в буфер
+        let size = self.input.read(buf)?;
+        // Перебираем байты
+        for b in &mut buf[..size] {
+            // Только буквы алфавита
+            if b.is_ascii_alphabetic() {
+                // База
+                let base = if b.is_ascii_uppercase() { 'A' } else { 'a' } as u8;
+                // Сдвигаем на `rot` в пределах 26 (количество букв в английском алфавите)
+                *b = (*b - base + self.rot) % 26 + base;
             }
         }
-
-        Ok(n)
+        // Возвращаем "сдвинутые" байты
+        Ok(size)
     }
 }
 
